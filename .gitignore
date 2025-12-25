@@ -1,35 +1,38 @@
-# Prerequisites
-*.d
+# CLion IDE 相关文件
+.idea/
+*.iml
+cmake-build-*/
+out/
 
-# Compiled Object files
-*.slo
-*.lo
+# CMake 生成文件
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+*.cmake
+
+# 编译生成文件
 *.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
+*.a
 *.so
 *.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
 *.exe
 *.out
-*.app
+*.d
 
-# Vscode
-*.vscode
+# 临时文件和日志
+*.log
+*.swp
+*.swo
+*~
+*.bak
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 测试相关
+test-results/
+
