@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <vector>
+#include <unordered_map>
 
 using namespace std;
 
@@ -64,11 +66,48 @@ public:
     }
 };
 
+
+vector<vector<int>> SumEqualK(const vector<int>& nums, int k)
+{
+    int sum = 0;
+    unordered_map<int, vector<int>> hash; // 存放的是 前缀和 和 下标的映射
+    vector<vector<int>> ret;
+    hash[0].push_back(-1);
+
+    for (int i = 0; i < nums.size(); ++i)
+    {
+        sum += nums[i];
+        int target = sum - k;
+        if (hash.count(target) > 0)
+        {
+            // 如果有这个target，那么这个位置之后，一直到当前这个位置，满足和为K
+            for (auto start : hash[target])
+            {
+                // 迭代器区间构造
+                ret.emplace_back(nums.begin() + start + 1, nums.begin() + i + 1);
+            }
+        }
+        hash[sum].push_back(i);
+    }
+
+    return std::move(ret);
+}
+
 int main()
 {
-    string num1 = "456", num2 = "77";
+    vector<int> nums({1,1,1});
 
-    Solution::addStrings(num1, num2);
+    auto ret = SumEqualK(nums, 1);
+
+    for (auto& e : ret)
+    {
+        for (int i = 0; i < e.size(); ++i)
+        {
+            std::cout << e[i] << " ";
+        }
+        std::cout << endl;
+    }
+
 
     return 0;
 }
