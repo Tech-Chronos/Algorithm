@@ -93,6 +93,51 @@ vector<vector<int>> SumEqualK(const vector<int>& nums, int k)
     return std::move(ret);
 }
 
+int findNumberOfLIS(vector<int>& nums)
+{
+    // len[i] 表示以 i 为结尾的最长递增子序列的长度
+    vector<int> len(nums.size(), 1);
+    // count[i] 表示以 i 为结尾的最长递增子序列的个数
+    vector<int> count(nums.size(), 1);
+
+    for (int i = 1; i < nums.size(); ++i)
+    {
+        for (int j = 0; j < i; ++j)
+        {
+            // 必须比 nums[j] 大 在更新
+            if (nums[i] > nums[j])
+            {
+                // 表示 以 j 为结尾的最长递增子序列的长度 + 1，就是len[i]
+                // 说名 最长递增子序列的长度没有变化，个数只要加上 count[j] 就可以了
+                if (len[j] + 1 == len[i])
+                {
+                    count[i] += count[j];
+                }
+                else if (len[j] + 1 > len[i]) // 说明最长递增子序列的个数变化了
+                {
+                    count[i] = count[j];
+                    len[i] = len[j] + 1;
+                }
+            }
+        }
+    }
+    int ret = count[0];
+    int max_len = len[0];
+    for (int i = 1; i < len.size(); ++i)
+    {
+        if (max_len < len[i])
+        {
+            max_len = len[i];
+            ret = count[i];
+        }
+        else if (max_len == len[i])
+        {
+            ret += count[i];
+        }
+    }
+    return ret;
+}
+
 int main()
 {
     vector<int> nums({1,1,1});
