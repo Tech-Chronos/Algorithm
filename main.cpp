@@ -138,22 +138,134 @@ int findNumberOfLIS(vector<int>& nums)
     return ret;
 }
 
-int main()
+
+//int main()
+//{
+//    vector<int> nums({1,1,1});
+//
+//    auto ret = SumEqualK(nums, 1);
+//
+//    for (auto& e : ret)
+//    {
+//        for (int i = 0; i < e.size(); ++i)
+//        {
+//            std::cout << e[i] << " ";
+//        }
+//        std::cout << endl;
+//    }
+//
+//
+//    return 0;
+//    //return 0;
+//}
+
+
+string decodeString(string s)
 {
-    vector<int> nums({1,1,1});
-
-    auto ret = SumEqualK(nums, 1);
-
-    for (auto& e : ret)
+    stack<int> num_st;
+    stack<string> str_st;
+    str_st.push("");
+    for (int i = 0; i < s.size();)
     {
-        for (int i = 0; i < e.size(); ++i)
+        // 如果是数字
+        if (s[i] >= '0' && s[i] <= '9')
         {
-            std::cout << e[i] << " ";
+            int tmp = 0;
+            while (s[i] >= '0' && s[i] <= '9')
+            {
+                tmp = tmp * 10 + (char)(s[i] - '0');
+                ++i;
+            }
+            num_st.push(tmp);
         }
-        std::cout << endl;
+
+        // 如果是左括号
+        if (s[i] == '[')
+        {
+            ++i;
+            string str;
+            while (s[i] >= 'a' && s[i] <= 'z')
+            {
+                str += s[i];
+                ++i;
+            }
+            str_st.push(str);
+        }
+
+        // 如果是右括号
+        if (s[i] == ']')
+        {
+            string str;
+
+            int num = num_st.top();
+            num_st.pop();
+
+            string tmp = str_st.top();
+            str_st.pop();
+
+            while (num--)
+            {
+                str += tmp;
+            }
+
+            str_st.top() += str;
+            ++i;
+        }
+
+        while (s[i] >= 'a' && s[i] <= 'z')
+        {
+            str_st.top() += s[i];
+            ++i;
+        }
+    }
+    return str_st.top();
+}
+
+
+// 建立小堆
+void AdjustDown(vector<int>& nums, int parent)
+{
+    int child = parent * 2 + 1;
+    while (child < nums.size())
+    {
+        if (child + 1 < nums.size() && nums[child] > nums[child + 1])
+        {
+            ++child;
+        }
+        if (nums[child] < nums[parent])
+        {
+            swap(nums[child], nums[parent]);
+            parent = child;
+            child = parent * 2 + 1;
+        }
+        else break;
+    }
+}
+
+vector<int> sortArray(vector<int>& nums)
+{
+    // 先建堆
+    for (int i = (nums.size() - 2) / 2; i >= 0; --i)
+    {
+        AdjustDown(nums, i);
     }
 
 
+    // 排序
+    vector<int> tmp(nums.size());
+    for (int i = 0; i < nums.size(); ++i)
+    {
+        tmp[i] = nums[0];
+        swap(nums[0], nums[nums.size() - 1]);
+        nums.pop_back();
+        AdjustDown(nums, 0);
+    }
+    return tmp;
+}
+
+int main()
+{
+    vector<int> v {5,2,3,1};
+    sortArray(v);
     return 0;
-    //return 0;
 }
