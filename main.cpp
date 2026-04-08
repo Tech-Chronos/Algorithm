@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <algorithm>
 
 using namespace std;
 
@@ -250,22 +251,113 @@ vector<int> sortArray(vector<int>& nums)
         AdjustDown(nums, i);
     }
 
-
+    int n = nums.size();
     // 排序
     vector<int> tmp(nums.size());
-    for (int i = 0; i < nums.size(); ++i)
+    for (int i = 0; i < n; ++i)
     {
         tmp[i] = nums[0];
-        swap(nums[0], nums[nums.size() - 1]);
+        swap(nums[0], nums[n - 1]);
         nums.pop_back();
         AdjustDown(nums, 0);
     }
     return tmp;
 }
 
+bool validateStackSequences(vector<int>& pushed, vector<int>& popped)
+{
+    stack<int> st;
+    int n = pushed.size();
+    int j = 0;
+    for (int i = 0; i < n; ++i)
+    {
+        st.push(pushed[i]);
+        while (j < n && !st.empty() && st.top() == popped[j])
+        {
+            st.pop();
+            ++j;
+        }
+    }
+
+    return j == n && st.empty();
+}
+
+
+
+// Definition for a binary tree node.
+struct TreeNode
+{
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+
+
+int widthOfBinaryTree(TreeNode* root)
+{
+    deque<pair<TreeNode*, long long>> q;
+    q.emplace_back(root, 0);
+
+    long long width = 0;
+    while (!q.empty())
+    {
+        long long size = q.size();
+        long long left = LLONG_MAX, right = LLONG_MIN;
+        while (size--)
+        {
+            auto front = q.front();
+            left = min(left, front.second);
+            right = max(right, front.second);
+            q.pop_front();
+            if (front.first->left)
+                q.emplace_back(front.first->left, (unsigned int)front.second * 2 + 1);
+            if (front.first->right)
+                q.emplace_back(front.first->right, (unsigned int)front.second * 2 + 2);
+        }
+        width = max(width, right - left + 1);
+    }
+    return width;
+}
+
+
 int main()
 {
-    vector<int> v {5,2,3,1};
-    sortArray(v);
+    // [1,3,2,5,null,null,9,6,null,7]
+    TreeNode* root = new TreeNode(1);
+    TreeNode* root1 = new TreeNode(3);
+    TreeNode* root2 = new TreeNode(2);
+    TreeNode* root3 = new TreeNode(5);
+    TreeNode* root4 = new TreeNode(9);
+    TreeNode* root5 = new TreeNode(6);
+    TreeNode* root6 = new TreeNode(7);
+
+
+    root->left = root1;
+    root->right = root2;
+    root1->left = root3;
+    root1->right = nullptr;
+    root2->left = nullptr;
+    root2->right = root4;
+    root3->left = root5;
+    root3->right = nullptr;
+
+    root4->left = root6;
+    root4->right = nullptr;
+
+    root5->left = root5->right = root6->left = root6->right = nullptr;
+
+    cout << widthOfBinaryTree(root);
+
+    delete root;
+    delete root1;
+    delete root2;
+    delete root3;
+    delete root4;
+    delete root5;
+    delete root6;
+
     return 0;
 }
